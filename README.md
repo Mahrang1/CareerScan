@@ -13,14 +13,6 @@
 
 </div>
 
----
-
-## 📸 Demo
-
-> *(Screenshot / GIF coming soon)*
-
----
-
 ## ✨ Features
 
 - 📄 **Resume Parsing** — Extracts text from any PDF resume using pdfplumber

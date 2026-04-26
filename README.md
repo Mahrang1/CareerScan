@@ -53,7 +53,7 @@
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/Mahrang1/smart-resume-analyzer.git
+git clone https://github.com/Mahrang1/CareerScan.git
 cd smart-resume-analyzer
 ```
 

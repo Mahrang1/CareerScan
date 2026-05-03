@@ -6,7 +6,7 @@ import os
 import pdfplumber
 from groq import Groq
 
-client = Groq(api_key=st.secrets["GROQ_API_KEY"]))
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 def get_gemini_response(input, pdf_content, prompt):
     completion = client.chat.completions.create(

@@ -97,7 +97,7 @@ h1, h2, h3 {
 """, unsafe_allow_html=True)
 
 # Header
-st.markdown("## Smart Resume Analyzer")
+st.markdown("## CareerScan")
 st.markdown("<p style='color:#888; margin-top:-12px;'>AI-powered resume analyzer — powered by LLaMA 3.3-70B</p>", unsafe_allow_html=True)
 st.divider()
 

@@ -34,7 +34,7 @@ def input_pdf_setup(uploaded_file):
         raise FileNotFoundError("no file uploaded")
 
 # Page config
-st.set_page_config(page_title="smart resume analyzer - Smart Resume Analyzer", layout="wide")
+st.set_page_config(page_title="CareerScan", layout="wide")
 
 # CSS
 st.markdown("""

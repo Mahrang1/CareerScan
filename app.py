@@ -1,5 +1,12 @@
+from dotenv import load_dotenv
+load_dotenv()
+import streamlit as st
 import streamlit.components.v1 as components
+import os
+import pdfplumber
+from groq import Groq
 
+# GA Code - st import ke BAAD
 components.html("""
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-P6ZWVSFW9X"></script>
 <script>
@@ -9,13 +16,6 @@ components.html("""
   gtag('config', 'G-P6ZWVSFW9X');
 </script>
 """, height=0)
-from dotenv import load_dotenv
-load_dotenv()
-
-import streamlit as st
-import os
-import pdfplumber
-from groq import Groq
 
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 

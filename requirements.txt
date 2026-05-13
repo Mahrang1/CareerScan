@@ -6,3 +6,4 @@ openai
 langchain
 pdfplumber
 groq
+streamlit-analytics2

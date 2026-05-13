@@ -1,21 +1,11 @@
 from dotenv import load_dotenv
 load_dotenv()
+
 import streamlit as st
-import streamlit.components.v1 as components
+import streamlit_analytics2 as streamlit_analytics
 import os
 import pdfplumber
 from groq import Groq
-
-# GA Code - st import ke BAAD
-components.html("""
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P6ZWVSFW9X"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P6ZWVSFW9X');
-</script>
-""", height=0)
 
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
@@ -47,147 +37,149 @@ def input_pdf_setup(uploaded_file):
 # Page config
 st.set_page_config(page_title="CareerScan", layout="wide")
 
-# CSS
-st.markdown("""
-<style>
-html, body, [data-testid="stAppViewContainer"] {
-    background-color: #0f0f0f;
-    color: #e0e0e0;
-}
-[data-testid="stAppViewContainer"] {
-    background-color: #0f0f0f;
-}
-[data-testid="stHeader"] {
-    background-color: #0f0f0f;
-}
-h1, h2, h3 {
-    color: #ffffff;
-}
-[data-testid="stTextArea"] textarea {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
-    border: 1px solid #333;
-    border-radius: 8px;
-}
-[data-testid="stFileUploader"] {
-    background-color: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 8px;
-}
-[data-testid="stButton"] button {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
-    border: 1px solid #444;
-    border-radius: 8px;
-    width: 100%;
-    transition: background-color 0.2s ease;
-}
-[data-testid="stButton"] button:hover {
-    background-color: #2a2a2a;
-    border-color: #666;
-    color: #ffffff;
-}
-.result-box {
-    background-color: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 10px;
-    padding: 20px;
-    margin-top: 16px;
-    color: #e0e0e0;
-}
-.footer {
-    text-align: center;
-    color: #555;
-    font-size: 0.8rem;
-    margin-top: 40px;
-    padding-top: 16px;
-    border-top: 1px solid #222;
-}
-</style>
-""", unsafe_allow_html=True)
+with streamlit_analytics.track():
 
-# Header
-st.markdown("## CareerScan")
-st.markdown("<p style='color:#888; margin-top:-12px;'>AI-powered resume analyzer — powered by LLaMA 3.3-70B</p>", unsafe_allow_html=True)
-st.divider()
+    # CSS
+    st.markdown("""
+    <style>
+    html, body, [data-testid="stAppViewContainer"] {
+        background-color: #0f0f0f;
+        color: #e0e0e0;
+    }
+    [data-testid="stAppViewContainer"] {
+        background-color: #0f0f0f;
+    }
+    [data-testid="stHeader"] {
+        background-color: #0f0f0f;
+    }
+    h1, h2, h3 {
+        color: #ffffff;
+    }
+    [data-testid="stTextArea"] textarea {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+        border: 1px solid #333;
+        border-radius: 8px;
+    }
+    [data-testid="stFileUploader"] {
+        background-color: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 8px;
+    }
+    [data-testid="stButton"] button {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+        border: 1px solid #444;
+        border-radius: 8px;
+        width: 100%;
+        transition: background-color 0.2s ease;
+    }
+    [data-testid="stButton"] button:hover {
+        background-color: #2a2a2a;
+        border-color: #666;
+        color: #ffffff;
+    }
+    .result-box {
+        background-color: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 16px;
+        color: #e0e0e0;
+    }
+    .footer {
+        text-align: center;
+        color: #555;
+        font-size: 0.8rem;
+        margin-top: 40px;
+        padding-top: 16px;
+        border-top: 1px solid #222;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-# Layout
-col1, col2 = st.columns([1, 1], gap="large")
+    # Header
+    st.markdown("## CareerScan")
+    st.markdown("<p style='color:#888; margin-top:-12px;'>AI-powered resume analyzer — powered by LLaMA 3.3-70B</p>", unsafe_allow_html=True)
+    st.divider()
 
-with col1:
-    st.markdown("**Job Description**")
-    input_text = st.text_area("", placeholder="Paste the job description here...", height=200, key="input", label_visibility="collapsed")
+    # Layout
+    col1, col2 = st.columns([1, 1], gap="large")
 
-with col2:
-    st.markdown("**Upload Resume (PDF)**")
-    uploaded_file = st.file_uploader("", type=["pdf"], label_visibility="collapsed")
-    if uploaded_file is not None:
-        st.success("PDF uploaded successfully")
+    with col1:
+        st.markdown("**Job Description**")
+        input_text = st.text_area("", placeholder="Paste the job description here...", height=200, key="input", label_visibility="collapsed")
 
-st.divider()
+    with col2:
+        st.markdown("**Upload Resume (PDF)**")
+        uploaded_file = st.file_uploader("", type=["pdf"], label_visibility="collapsed")
+        if uploaded_file is not None:
+            st.success("PDF uploaded successfully")
 
-# Buttons
-st.markdown("**Choose Analysis**")
-col_b1, col_b2, col_b3 = st.columns(3)
+    st.divider()
 
-with col_b1:
-    submit1 = st.button("HR Profile Review")
-with col_b2:
-    submit2 = st.button("Skill Improvement")
-with col_b3:
-    submit4 = st.button("ATS Percentage Match")
+    # Buttons
+    st.markdown("**Choose Analysis**")
+    col_b1, col_b2, col_b3 = st.columns(3)
 
-# Prompts
-input_prompt1 = """
-You are an experienced HR with tech experience in the field of Data Science, Full Stack Web Development,
-Big Data Engineering, DevOps, and Data Analysis. Your task is to review the provided resume against the job description.
-Please share your professional evaluation on whether the candidate's profile aligns with the role.
-Highlight the strengths and weaknesses of the applicant in relation to the specified job description.
-"""
+    with col_b1:
+        submit1 = st.button("HR Profile Review")
+    with col_b2:
+        submit2 = st.button("Skill Improvement")
+    with col_b3:
+        submit4 = st.button("ATS Percentage Match")
 
-input_prompt2 = """
-You are a skilled career coach with expertise in tech roles. Review the resume and job description provided.
-Suggest specific skills the candidate should learn or improve to better match this role.
-Be practical and specific — mention courses, tools, or technologies they should focus on.
-"""
+    # Prompts
+    input_prompt1 = """
+    You are an experienced HR with tech experience in the field of Data Science, Full Stack Web Development,
+    Big Data Engineering, DevOps, and Data Analysis. Your task is to review the provided resume against the job description.
+    Please share your professional evaluation on whether the candidate's profile aligns with the role.
+    Highlight the strengths and weaknesses of the applicant in relation to the specified job description.
+    """
 
-input_prompt3 = """
-You are a skilled ATS (Applicant Tracking System) scanner with deep understanding of Data Science,
-Full Stack Web Development, and ATS functionality. Evaluate the resume against the provided job description.
-Output format:
-1. Match Percentage: X%
-2. Missing Keywords: list them
-3. Final Thoughts: brief summary
-"""
+    input_prompt2 = """
+    You are a skilled career coach with expertise in tech roles. Review the resume and job description provided.
+    Suggest specific skills the candidate should learn or improve to better match this role.
+    Be practical and specific — mention courses, tools, or technologies they should focus on.
+    """
 
-# Results
-if submit1:
-    if uploaded_file is not None:
-        with st.spinner("Analyzing your resume..."):
-            pdf_content = input_pdf_setup(uploaded_file)
-            response = get_gemini_response(input_prompt1, pdf_content, input_text)
-        st.markdown("<div class='result-box'>" + response.replace("\n", "<br>") + "</div>", unsafe_allow_html=True)
-    else:
-        st.warning("Please upload your resume first.")
+    input_prompt3 = """
+    You are a skilled ATS (Applicant Tracking System) scanner with deep understanding of Data Science,
+    Full Stack Web Development, and ATS functionality. Evaluate the resume against the provided job description.
+    Output format:
+    1. Match Percentage: X%
+    2. Missing Keywords: list them
+    3. Final Thoughts: brief summary
+    """
 
-elif submit2:
-    if uploaded_file is not None:
-        with st.spinner("Finding skill gaps..."):
-            pdf_content = input_pdf_setup(uploaded_file)
-            response = get_gemini_response(input_prompt2, pdf_content, input_text)
-        st.markdown("<div class='result-box'>" + response.replace("\n", "<br>") + "</div>", unsafe_allow_html=True)
-    else:
-        st.warning("Please upload your resume first.")
+    # Results
+    if submit1:
+        if uploaded_file is not None:
+            with st.spinner("Analyzing your resume..."):
+                pdf_content = input_pdf_setup(uploaded_file)
+                response = get_gemini_response(input_prompt1, pdf_content, input_text)
+            st.markdown("<div class='result-box'>" + response.replace("\n", "<br>") + "</div>", unsafe_allow_html=True)
+        else:
+            st.warning("Please upload your resume first.")
 
-elif submit4:
-    if uploaded_file is not None:
-        with st.spinner("Calculating ATS match..."):
-            pdf_content = input_pdf_setup(uploaded_file)
-            response = get_gemini_response(input_prompt3, pdf_content, input_text)
-        st.markdown("<div class='result-box'>" + response.replace("\n", "<br>") + "</div>", unsafe_allow_html=True)
-    else:
-        st.warning("Please upload your resume first.")
+    elif submit2:
+        if uploaded_file is not None:
+            with st.spinner("Finding skill gaps..."):
+                pdf_content = input_pdf_setup(uploaded_file)
+                response = get_gemini_response(input_prompt2, pdf_content, input_text)
+            st.markdown("<div class='result-box'>" + response.replace("\n", "<br>") + "</div>", unsafe_allow_html=True)
+        else:
+            st.warning("Please upload your resume first.")
 
-# Footer
-st.markdown("<div class='footer'>Made by Mahrang Riaz | Sir Syed University of Engineering and Technology</div>", unsafe_allow_html=True)
+    elif submit4:
+        if uploaded_file is not None:
+            with st.spinner("Calculating ATS match..."):
+                pdf_content = input_pdf_setup(uploaded_file)
+                response = get_gemini_response(input_prompt3, pdf_content, input_text)
+            st.markdown("<div class='result-box'>" + response.replace("\n", "<br>") + "</div>", unsafe_allow_html=True)
+        else:
+            st.warning("Please upload your resume first.")
+
+    # Footer
+    st.markdown("<div class='footer'>Made by Mahrang Riaz | Sir Syed University of Engineering and Technology</div>", unsafe_allow_html=True)
